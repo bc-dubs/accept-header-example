@@ -12,6 +12,10 @@ const getIndex = (request, response) => {
   respond(request, response, index, 'text/html');
 };
 
+const getCats = (request, response) => {
+  
+};
+
 module.exports = {
   getCats,
   getIndex,

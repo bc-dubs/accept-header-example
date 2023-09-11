@@ -5,11 +5,23 @@ const responseHandler = require('./responses.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-
+    '/cats' : responseHandler.getCats,
+    '/': responseHandler.getIndex,
+    index: responseHandler.getIndex
 };
 
 const onRequest = (request, response) => {
+    const parsedUrl = url.parse(request.url);
+    const acceptedTypes = request.headers.accept; // .headers will give a comma separated string list in order of preference
 
+    // if/elses and switches are inefficient, so use a dictionary!
+
+    const handlerFunction = urlStruct[parsedUrl.pathname];
+
+    (handlerFunction || responseHandler.getIndex)();
+
+    //console.log(`URL: ${request.url}`);
+    //console.dir(parsedUrl);
 };
 
 http.createServer(onRequest).listen(port, () => {

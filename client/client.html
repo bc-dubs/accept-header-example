@@ -25,12 +25,22 @@
   </style>
   <script>
     const sendFetchRequest = (url, acceptedType) => {
-
+      const options = {
+        method: 'GET',
+        headers: { 'accept': acceptedType }
+      };
+      
+      const fetchPromise = fetch(url, options); // asynchronous operation, result is not recieved instantly. Therefore we need to wait
+      fetchPromise.then(response => { console.dir(response) }); // Defining a function that runs when server responds
     };
 
     const init = () => {
       const jsonButton = document.querySelector("#getCatsJSON");
       const xmlButton = document.querySelector("#getCatsXML");
+
+      const sendJSON = () => sendFetchRequest('/cats', 'application/json'); // Enclosing functions because we can't attach parameters to click event functions
+      jsonButton.addEventListener('click', sendJSON);
+      xmlButton.addEventListener('click', () => sendFetchRequest('/cats', 'application/xml'));
 
     };
 
