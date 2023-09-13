@@ -18,7 +18,7 @@ const onRequest = (request, response) => {
 
     const handlerFunction = urlStruct[parsedUrl.pathname];
 
-    (handlerFunction || responseHandler.getIndex)();
+    (handlerFunction || responseHandler.getIndex)(request, response, acceptedTypes); // If the url doesn't exist, handlerFunction is undefined (a falsy value)
 
     //console.log(`URL: ${request.url}`);
     //console.dir(parsedUrl);

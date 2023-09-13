@@ -24,6 +24,40 @@
     }
   </style>
   <script>
+    const handleResponse = (response) => {
+      response.text().then(text => { // Using 'then' b/c function is asynchronous
+
+        const contentDiv = document.querySelector("#content");
+        contentDiv.appendChild(document.createElement("hr"));
+
+        const h1 = document.createElement("h1");
+        const p = document.createElement("p");
+        const h2 = document.createElement("h2");
+        const rawData = document.createElement("p");
+        
+        const contentType = response.headers.get('Content-Type');
+        h2.textContent = contentType;
+        rawData.innerText = text;
+
+        if(contentType === "application/json"){
+          const parsedCat = JSON.parse(text);
+          h1.textContent = `Name: ${parsedCat.name}`;
+          p.textContent = `Age: ${parsedCat.age}`;
+        } else if(contentType === "text/xml"){ // no default option - we don't want to parse an unknown data type
+          const parsedResponse = new window.DOMParser().parseFromString(text, "text/xml");
+          h1.textContent = "Name : " + parsedResponse.querySelector("name").textContent;
+          p.textContent = "Age : " + parsedResponse.querySelector("age").textContent;
+
+        }
+
+        contentDiv.appendChild(h1);
+        contentDiv.appendChild(p);
+        contentDiv.appendChild(h2);
+        contentDiv.appendChild(rawData);
+
+      });
+    }
+
     const sendFetchRequest = (url, acceptedType) => {
       const options = {
         method: 'GET',
@@ -31,7 +65,7 @@
       };
       
       const fetchPromise = fetch(url, options); // asynchronous operation, result is not recieved instantly. Therefore we need to wait
-      fetchPromise.then(response => { console.dir(response) }); // Defining a function that runs when server responds
+      fetchPromise.then(response => { handleResponse(response) }); // Defining a function that runs when server responds
     };
 
     const init = () => {
@@ -40,7 +74,7 @@
 
       const sendJSON = () => sendFetchRequest('/cats', 'application/json'); // Enclosing functions because we can't attach parameters to click event functions
       jsonButton.addEventListener('click', sendJSON);
-      xmlButton.addEventListener('click', () => sendFetchRequest('/cats', 'application/xml'));
+      xmlButton.addEventListener('click', () => sendFetchRequest('/cats', 'text/xml'));
 
     };
 
